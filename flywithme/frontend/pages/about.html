@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Fly With Me</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Navbar dynamically loaded -->
+    <div id="navbar"></div>
+
+    <header>
+        <h1>About Fly With Me</h1>
+    </header>
+
+    <main>
+        <section class="about-us">
+            <h2>Who We Are</h2>
+            <p>
+                Welcome to Fly With Me! We are your trusted travel planners, offering exclusive deals on hotels, flights, and travel packages worldwide.
+                Our mission is to make travel accessible, seamless, and unforgettable for all our clients.
+            </p>
+        </section>
+
+        <section class="our-values">
+            <h2>Our Values</h2>
+            <ul>
+                <li><strong>Customer-Centric:</strong> We prioritize your needs and preferences to deliver a personalized travel experience.</li>
+                <li><strong>Reliability:</strong> Count on us for the best deals and stress-free planning.</li>
+                <li><strong>Passion for Travel:</strong> Our team shares your enthusiasm for discovering new places and cultures.</li>
+            </ul>
+        </section>
+
+        <section class="team">
+            <h2>Meet Our Team</h2>
+            <p>
+                Our team comprises passionate travel enthusiasts, experienced planners, and tech experts committed to making your journeys memorable.
+            </p>
+        </section>
+
+        <section class="why-choose-us">
+            <h2>Why Choose Fly With Me?</h2>
+            <ul>
+                <li>Exclusive travel packages tailored to your interests</li>
+                <li>24/7 customer support to assist you at every step</li>
+                <li>Secure and user-friendly booking platform</li>
+            </ul>
+        </section>
+    </main>
+
+    <!-- Footer dynamically loaded -->
+    <div id="footer"></div>
+
+    <!-- JavaScript to load Navbar and Footer -->
+    <script>
+        // Load Navbar
+        fetch('../navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar').innerHTML = data;
+            });
+
+        // Load Footer
+        fetch('../footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tours - Fly With Me</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/modal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+
+<body>
+    <!-- Navbar (dynamically loaded) -->
+    <div id="navbar"></div>
+
+    <div class="container">
+        <header>
+            <h1>Our Tours</h1>
+        </header>
+
+        <div class="tours">
+            <div class="tour-item">
+                <img src="../images/paris.jpg" alt="Paris">
+                <h3>Explore the Wonders of Paris</h3>
+                <button onclick="viewTourDetails('Paris')">Read More</button>
+            </div>
+            <div class="tour-item">
+                <img src="../images/himalaya.jpg" alt="Himalayas">
+                <h3>Adventure in the Himalayas</h3>
+                <button onclick="viewTourDetails('Himalayas')">Read More</button>
+            </div>
+            <div class="tour-item">
+                <img src="../images/maldives.jpg" alt="Maldives">
+                <h3>Unwind in the Serenity of the Maldives</h3>
+                <button onclick="viewTourDetails('Maldives')">Read More</button>
+            </div>
+        </div>
+
+        <div class="tours">
+            <div class="tour-item">
+                <img src="../images/munnar.jpg" alt="Munnar">
+                <h3>Discover the Enchanting Beauty of Munnar</h3>
+                <button onclick="viewTourDetails('Munnar')">Read More</button>
+            </div>
+            <div class="tour-item">
+                <img src="../images/goa.jpg" alt="Goa">
+                <h3>Experience the Vibrant Charms of Goa</h3>
+                <button onclick="viewTourDetails('Goa')">Read More</button>
+            </div>
+            <div class="tour-item">
+                <img src="../images/kashmir.jpg" alt="Kashmir">
+                <h3>Discover the Enchanting Beauty of Kashmir</h3>
+                <button onclick="viewTourDetails('Kashmir')">Read More</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Footer (dynamically loaded) -->
+    <div id="footer"></div>
+
+    <script>
+        function viewTourDetails(place) {
+            window.location.href = `tourdetails.html?place=${encodeURIComponent(place)}`;
+        }
+    </script>
+
+    <script>
+        function handleLogout() {
+            const dashboard = document.getElementById("dashboard");
+            dashboard.style.display = "none";
+
+            sessionStorage.clear(); // Remove user data
+            loadComponent('/navbar.html', 'navbar', renderNavbar); // Reload Navbar
+        }
+    </script>
+
+    <script>
+        window.renderNavbar = function () {
+            const authButton = document.getElementById("authButton");
+
+            if (!authButton) {
+                console.warn("Navbar not loaded yet, retrying...");
+                setTimeout(renderNavbar, 100); // Retry after 100ms
+                return;
+            }
+
+            const userFullName = sessionStorage.getItem("UserFullName");
+
+            if (userFullName) {
+
+                const dashboard = document.getElementById("dashboard");
+                dashboard.style.display = "block";
+
+                authButton.innerHTML = `
+     <div id="authContainer">
+        <div id="welcomeText"> <i class="fas fa-user"></i>${userFullName}</div>
+        <button id="logoutButton" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+`;
+            }
+        };
+
+
+    </script>
+
+    <script>
+        const loadComponent = async (path, target, callback) => {
+            try {
+                const response = await fetch(path);
+                if (!response.ok) throw new Error();
+                document.getElementById(target).innerHTML = await response.text();
+
+                // Call the callback function if provided
+                if (callback && typeof callback === "function") {
+                    callback();
+                }
+            } catch {
+                document.getElementById(target).innerHTML = `<p>Error loading ${target}</p>`;
+            }
+        };
+
+        // Load Navbar and Footer, then renderNavbar after navbar loads
+        loadComponent('/navbar.html', 'navbar', renderNavbar);
+        loadComponent('/footer.html', 'footer');
+
+    </script>
+</body>
+
+</html>

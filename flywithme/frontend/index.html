@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fly With Me - Plan Your Trip</title>
+
+    <!-- External Resources -->
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/chat.css">
+    <link rel="stylesheet" href="/css/modal.css">
+    <link rel="stylesheet" href="/css/loader.css">
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        #loader {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        /* Center the search box */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            width: 700px;
+        }
+
+        /* Input field */
+        .search-box input {
+            width: 100%;
+            padding: 10px 40px 10px 49px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            outline: none;
+            font-size: 21px;
+            height: 35px;
+        }
+
+        /* Magnifying Glass Icon (Left) */
+        .search-box i {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: gray;
+            font-size: 28px;
+        }
+
+        .search-box img {
+            position: absolute;
+            top: 53%;
+            right: -72px;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 47px;
+        }
+
+        .search-results {
+            display: none;
+            width: 35%;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin-top: 15px;
+            padding: 10px;
+            overflow-y: auto;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            margin-left: 33%;
+        }
+
+        /* Each Search Result */
+        .search-results div {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .search-results div:last-child {
+            border-bottom: none;
+        }
+
+        .search-results div:hover {
+            background: #f1f1f1;
+        }
+
+        #flightResults {
+            margin-top: 20px;
+            text-align: left;
+        }
+    </style>
+
+    <style>
+        .sidebarMenu p {
+            color: #947234;
+            margin-top: 10%;
+            text-align: center;
+        }
+
+        .menu_overlay {
+            display: none;
+            position: fixed;
+            background: rgba(0, 0, 0, 0.4);
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .menuOpened .menu_overlay {
+            display: block;
+        }
+
+        body.menuOpened {
+            overflow: hidden;
+        }
+
+        .cornerMenu {
+            width: 90px;
+            height: 90px;
+            position: fixed;
+            right: 25px;
+            bottom: 168px;
+            background: #2c4c7b;
+            box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.10);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 93px;
+            color: #fff;
+            font-size: 41px;
+            z-index: 6;
+            cursor: pointer;
+        }
+
+        .menu {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            background: #2c4c7b;
+            box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.10);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 42px;
+            color: #fff;
+            font-size: 16px;
+            top: 5px;
+            right: 0;
+            left: 0;
+            margin: auto;
+            transform: translate(0, 0);
+            opacity: 0;
+            z-index: 5;
+            transition: all .4s ease-in-out;
+        }
+
+        .menuOpened .menu {
+            opacity: 1;
+            transition: all .4s ease-in-out;
+        }
+
+        .menuOpened .menu1 {
+            transform: translate(-105px, 20px);
+            transition-delay: 0s;
+        }
+
+        .menuOpened .menu2 {
+            transform: translate(-78px, -33px);
+            transition-delay: .05s;
+        }
+
+        .menuOpened .menu3 {
+            transform: translate(-38px, -76px);
+            transition-delay: .1s;
+        }
+
+        .menuOpened .menu4 {
+            transform: translate(18px, -99px);
+            transition-delay: .15s;
+        }
+
+        .menu-text {
+            position: absolute;
+            right: 100%;
+            /* Position text to the left of the icon */
+            top: 50%;
+            transform: translateY(-50%) translateX(-10px);
+            /* Offset slightly */
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            pointer-events: none;
+        }
+
+        .menu:hover .menu-text {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+            /* Move to position */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar"></div>
+
+    <div class="container">
+
+        <header class="hero">
+            <h1>Your Journey Starts Here</h1>
+            <p>Discover amazing places at exclusive deals with Fly With Me.</p>
+        </header>
+
+        <!-- Dashboard (Fixed ID) -->
+        <div id="dashboard"></div>
+
+        <div id="searchDiv" style="display: none;">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i> <!-- Search Icon -->
+                    <input type="text" placeholder="Search..." id="searchInput"
+                        onkeypress="handleSearchKeyPress(event)">
+                    <img src="/images/logo-2.png" alt="Company Logo"> <!-- Logo -->
+                </div>
+            </div>
+
+            <!-- Search Results Container -->
+            <div class="search-results" id="searchResults"></div>
+        </div>
+        <!-- Chat Icon -->
+        <!-- <div class="chat-icon" id="chatButton">
+            <i class="fas fa-comments"></i>
+        </div> -->
+
+        <!-- Chat Container (Initially Hidden) -->
+        <!-- <div class="chat-container" id="chatContainer" style="display: none;">
+            <div class="chat-header">Chat with Fly With Me!</div>
+            <div class="chat-box" id="chatBox" aria-live="polite"></div>
+            <div id="chatLoader" style="display: none; text-align: center; font-weight: bold;">
+                <span>Loading... ⏳</span>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="userInput" placeholder="Type your message..." aria-label="Chat input"
+                    onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()" aria-label="Send message">Send</button>
+            </div>
+        </div> -->
+
+        <!-- Modal for Google Maps -->
+        <div id="mapModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <div id="map" style="width: 100%; height: 400px;"></div> <!-- Map container -->
+            </div>
+        </div>
+
+        <div class="login-popup" id="loginPopup" style="display: none;">
+            <div class="login-popup-content">
+                <p id="loginMessage" style="color: #060606 !important;">You need to log in to access the chat.</p>
+
+                <!-- Google Sign-In Button -->
+                <button id="googleLoginButton" onclick="loginWithGoogle()">Login with Google</button>
+
+                <!-- Logout Button (Hidden Initially) -->
+                <!-- <button id="logoutButton" style="display: none;" onclick="logout()">Logout</button> -->
+
+                <button onclick="closeLoginPopup()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flight Details Modal -->
+    <div id="flightModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-body" style="max-height: 650px; overflow-y: auto;">
+                <span class="close" onclick="document.getElementById('flightModal').style.display='none'">&times;</span>
+                <h2 style="color: #493b3b;">Search Flights</h2>
+
+                <label for="flightOrigin">🏙️ Origin:</label>
+                <input type="text" id="flightOrigin" placeholder="Enter City or Airport"
+                    onkeyup="fetchPlaces(this.value, 'flightOriginSuggestions')" autocomplete="off" required>
+                <div id="flightOriginSuggestions" class="suggestions-box"></div>
+                <span id="flightOriginError" class="error-message-field"></span>
+
+                <label for="flightDestination">🏙️ Destination:</label>
+                <input type="text" id="flightDestination" placeholder="Enter City or Airport"
+                    onkeyup="fetchPlaces(this.value, 'flightDestinationSuggestions')" autocomplete="off" required>
+                <div id="flightDestinationSuggestions" class="suggestions-box"></div>
+                <span id="flightDestinationError" class="error-message-field"></span>
+
+                <label for="flightDate">📅 Date:</label>
+                <input type="date" id="flightDate" required>
+                <span id="flightDateError" class="error-message-field"></span>
+
+                <button onclick="validateAndSearchFlights()">Search</button>
+
+                <div id="flightResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hotel Details Modal -->
+    <div id="hotelModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-body" style="max-height: 650px; overflow-y: auto;">
+                <span class="close" onclick="document.getElementById('hotelModal').style.display='none'">&times;</span>
+                <h2 style="color: #493b3b;">Search Hotels</h2>
+
+                <label for="hotel-city">🏙️ City:</label>
+                <input type="text" id="hotel-city" placeholder="Enter city name"
+                    oninput="showCitySuggestions(this.value)">
+                <div id="hotel-suggestions" class="suggestions-box"></div>
+                <span id="hotelCityError" class="error-message-field"></span> <!-- Fixed ID -->
+
+                <label for="hotel-checkInDate">📅 Check-In Date:</label>
+                <input type="date" id="hotel-checkInDate" required>
+                <span id="hotelCheckInError" class="error-message-field"></span> <!-- Fixed ID -->
+
+                <label for="hotel-checkOutDate">📅 Check-Out Date:</label>
+                <input type="date" id="hotel-checkOutDate" required>
+                <span id="hotelCheckOutError" class="error-message-field"></span> <!-- Fixed ID -->
+
+                <label for="hotel-adults">Adults:</label>
+                <input type="number" id="hotel-adults" min="1" value="1" required>
+                <span id="hotelAdultsError" class="error-message-field"></span> <!-- Fixed ID -->
+
+
+                <button onclick="validateAndSearchHotels()">Search</button>
+
+                <div id="hotel-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hotel Details Modal -->
+    <div id="activityModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-body" style="max-height: 650px; overflow-y: auto;">
+                <span class="close"
+                    onclick="document.getElementById('activityModal').style.display='none'">&times;</span>
+                <h2 style="color: #493b3b;">Search Tours and Activities</h2>
+
+                <label for="activity-city">🏙️ City:</label>
+                <input type="text" id="activity-city" placeholder="Enter city name"
+                    oninput="showCitySuggestionsActivity(this.value)">
+                <div id="activity-suggestions" class="suggestions-box"></div>
+                <span id="activity-city-error" class="error-message-field"></span>
+
+                <label for="activity-date">📅 Date:</label>
+                <input type="date" id="activity-date">
+                <span id="activity-date-error" class="error"></span>
+
+                <button onclick="validateAndSearchActivities()">Search</button>
+
+                <div id="activity-results"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="loading" id="loader" style="display: none;">
+        <svg class="pl" width="240" height="240" viewBox="0 0 240 240">
+            <circle class="pl__ring pl__ring--a" cx="120" cy="120" r="105" fill="none" stroke="#000" stroke-width="20"
+                stroke-dasharray="0 660" stroke-dashoffset="-330" stroke-linecap="round"></circle>
+            <circle class="pl__ring pl__ring--b" cx="120" cy="120" r="35" fill="none" stroke="#000" stroke-width="20"
+                stroke-dasharray="0 220" stroke-dashoffset="-110" stroke-linecap="round"></circle>
+            <circle class="pl__ring pl__ring--c" cx="120" cy="120" r="70" fill="none" stroke="#000" stroke-width="20"
+                stroke-dasharray="0 440" stroke-linecap="round"></circle>
+            <circle class="pl__ring pl__ring--d" cx="120" cy="120" r="70" fill="none" stroke="#000" stroke-width="20"
+                stroke-dasharray="0 440" stroke-linecap="round"></circle>
+        </svg>
+    </div>
+
+    <div class="cornerMenu" id="menuDiv" style="display: none;">
+        <i class="fa fa-bars" aria-hidden="true"></i>
+        <div class="menu menu1" onclick="openFlightModal()">
+            <i class="fa fa-plane" aria-hidden="true"></i>
+            <span class="menu-text">Flights</span>
+        </div>
+        <div class="menu menu3" onclick="openActivityModal()">
+            <i class="fa fa-snowflake" aria-hidden="true"></i>
+            <span class="menu-text">Tous & Activities</span>
+        </div>
+        <div class="menu menu2" onclick="openHotelModal()">
+            <i class="fa fa-hotel" aria-hidden="true"></i>
+            <span class="menu-text">Hotels</span>
+        </div>
+        <div class="" onclick="openTest()">
+            <span class=""></span>
+        </div>
+    </div>
+
+    <div id="footer"></div>
+
+    <!--Scripts-->
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJlHAegeheFqyBMw5Ag16-WAuhDnRfVGk&libraries=marker"
+        async defer></script>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const body = document.body;
+            const menuButtons = document.querySelectorAll(".openMenu, .cornerMenu");
+            const menuOverlay = document.querySelector(".menu_overlay");
+            const submenus = document.querySelectorAll(".submenu");
+
+            let isMenuOpening = false; // Track menu state
+
+            console.log("Menu script loaded ✅"); // ✅ Check if script runs
+
+            // 🟠 Main menu toggle
+            menuButtons.forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.stopPropagation();
+
+                    console.log("Main menu clicked 🎯"); // ✅ Debugging log
+
+                    const isCurrentlyOpen = body.classList.contains("menuOpened");
+                    isMenuOpening = !isCurrentlyOpen; // Track menu state
+
+                    body.classList.toggle("menuOpened");
+
+                    if (isMenuOpening) {
+                        // 🟢 If opening main menu, close all submenus
+                        submenus.forEach(sub => sub.classList.remove("submenu-opened"));
+                    }
+                });
+            });
+
+            // 🟡 Submenu toggle
+            submenus.forEach(submenu => {
+                submenu.addEventListener("click", function (event) {
+                    event.stopPropagation();
+
+                    console.log("Submenu clicked 🎯"); // ✅ Debugging log
+
+                    if (isMenuOpening) {
+                        return; // Prevent accidental submenu opening
+                    }
+
+                    // Close other submenus before opening this one
+                    submenus.forEach(sub => {
+                        if (sub !== submenu) sub.classList.remove("submenu-opened");
+                    });
+
+                    submenu.classList.toggle("submenu-opened");
+                });
+            });
+
+            // 🔴 Click outside closes everything
+            document.addEventListener("click", function (event) {
+                if (!event.target.closest(".menu, .openMenu, .cornerMenu, .submenu")) {
+                    console.log("Clicked outside, closing menu ❌"); // ✅ Debugging log
+                    body.classList.remove("menuOpened");
+                    submenus.forEach(sub => sub.classList.remove("submenu-opened"));
+                }
+            });
+
+            // 🟣 Click on overlay closes menu
+            if (menuOverlay) {
+                menuOverlay.addEventListener("click", function () {
+                    console.log("Overlay clicked, closing menu ❌"); // ✅ Debugging log
+                    body.classList.remove("menuOpened");
+                    submenus.forEach(sub => sub.classList.remove("submenu-opened"));
+                });
+            }
+        });
+
+
+
+    </script>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const IsAuthenticated = sessionStorage.getItem("IsAuthenticated");
+            const searchDiv = document.getElementById("searchDiv");
+            const searchInput = document.getElementById("searchInput");
+            const searchResults = document.getElementById("searchResults");
+            const menuDiv = document.getElementById("menuDiv");
+            if (IsAuthenticated === "true") {
+                searchDiv.style.display = "block";
+                menuDiv.style.display = "block";
+                searchInput.ariaValueNow = "";
+                searchResults.style.display = "none";
+            } else {
+                searchDiv.style.display = "none";
+                menuDiv.style.display = "none";
+            }
+        });
+
+    </script>
+
+    <script>
+        // document.addEventListener("DOMContentLoaded", async function () {
+        //     const chatButton = document.getElementById("chatButton");
+        //     const chatbox = document.getElementById("chatContainer");
+        //     const loginPopup = document.getElementById("loginPopup");
+
+        //     async function checkAuthStatus() {
+        //         try {
+        //             //const response = await fetch("https://localhost:44307/api/Account/session");
+        //             const IsAuthenticated = sessionStorage.getItem("IsAuthenticated");
+        //             //if (!response.ok) {
+        //             if (!IsAuthenticated) {
+        //                 sessionStorage.clear(); // Clear session storage if not authenticated
+        //                 return false;
+        //             } else {
+        //                 return true;
+        //             }
+        //             // const data = await response.json();
+        //             // if (data.isAuthenticated) {
+        //             //     // Store user details in session storage
+        //             //     sessionStorage.setItem("UserEmail", data.email);
+        //             //     sessionStorage.setItem("UserFirstName", data.firstName);
+        //             //     sessionStorage.setItem("UserLastName", data.lastName);
+        //             //     sessionStorage.setItem("UserFullName", data.fullName);
+        //             //     return true;
+        //             // } else {
+        //             //     sessionStorage.clear();
+        //             //     return false;
+        //             // }
+        //         } catch (error) {
+        //             console.error("Error checking authentication status:", error);
+        //             sessionStorage.clear();
+        //             return false;
+        //         }
+        //     }
+
+        //     async function toggleChat() {
+        //         const isAuthenticated = await checkAuthStatus();
+
+        //         if (isAuthenticated) {
+        //             // Show chatbox if authenticated
+        //             chatbox.style.display = chatbox.style.display === "none" ? "block" : "none";
+        //         } else {
+        //             // Show login popup if not authenticated
+        //             loginPopup.style.display = "block";
+        //         }
+        //     }
+
+        //     chatButton.addEventListener("click", toggleChat);
+        // });
+
+        // function closeLoginPopup() {
+        //     document.getElementById("loginPopup").style.display = "none";
+        // }
+    </script>
+
+    <script>
+        // Open & Close Modal Functions
+        document.addEventListener("DOMContentLoaded", function () {
+            // Ensure the modal is hidden when the page loads
+            document.getElementById("mapModal").style.display = "none";
+        });
+
+        function openModal() {
+            const modal = document.getElementById("mapModal");
+            modal.style.display = "flex"; // Show modal only when called
+
+            if (!map) {
+                initMap(); // Initialize Google Map only when needed
+            }
+        }
+
+        function closeModal() {
+            document.getElementById("mapModal").style.display = "none";
+        }
+    </script>
+
+    <!--Google Login Start-->
+    <script>
+        const CLIENT_ID = "919950691565-kogn81geifp6l7pfuhjdlm3hv33frfeb.apps.googleusercontent.com";
+
+        function initializeGoogleLogin() {
+            google.accounts.id.initialize({
+                client_id: CLIENT_ID,
+                callback: handleGoogleLogin
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById("googleLoginButton"),
+                { theme: "outline", size: "large" }
+            );
+        }
+
+        function handleGoogleLogin(response) {
+            // Show loader
+            document.getElementById("loader").style.display = "block";
+            closeLoginPopup();
+            // Send token to backend for verification
+            fetch("https://localhost:44307/api/Account/google-login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ token: response.credential })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.isAuthenticated) {
+                        // Store user details in session storage
+                        sessionStorage.setItem("UserEmail", data.userEmail);
+                        sessionStorage.setItem("UserFirstName", data.userFirstName);
+                        sessionStorage.setItem("UserLastName", data.userLastName);
+                        sessionStorage.setItem("UserFullName", data.userFullName);
+                        sessionStorage.setItem("IsAuthenticated", data.isAuthenticated);
+                        sessionStorage.setItem("TOKEN", data.token);
+                        sessionStorage.setItem("UserId", data.userId);
+                        loadComponent('/navbar.html', 'navbar', renderNavbar);
+                        const searchDiv = document.getElementById("searchDiv");
+                        const menuDiv = document.getElementById("menuDiv");
+                        searchDiv.style.display = "block";
+                        menuDiv.style.display = "block";
+                    } else {
+                        console.error("Login failed. Try again.");
+                    }
+                })
+                .catch(error => console.error("Login error:", error))
+                .finally(() => {
+                    // Hide loader after operation completes
+                    document.getElementById("loader").style.display = "none";
+                });
+        }
+
+        function handleLogin() {
+            loginPopup.style.display = "block";
+        }
+
+        function handleLogout() {
+            const searchDiv = document.getElementById("searchDiv");
+            searchDiv.style.display = "none";
+            const menuDiv = document.getElementById("menuDiv");
+            menuDiv.style.display = "none";
+            sessionStorage.clear(); // Remove user data
+            loadComponent('/navbar.html', 'navbar', renderNavbar); // Reload Navbar
+        }
+
+
+
+        async function logout() {
+            try {
+                await fetch("https://localhost:44307/api/Account/logout", { method: "POST" });
+                sessionStorage.clear(); // Clear session storage
+                alert("Logged out successfully!");
+                window.location.reload(); // Refresh the page
+            } catch (error) {
+                console.error("Logout failed:", error);
+            }
+        }
+
+
+        function loginWithGoogle() {
+            initializeGoogleLogin();
+        }
+
+        function closeLoginPopup() {
+            document.getElementById("loginPopup").style.display = "none";
+        }
+    </script>
+    <script>
+
+        function handleSearchKeyPress(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent form submission if inside a form
+                sendMessage();
+            }
+        }
+
+
+
+    </script>
+    <!--Google Login End-->
+
+    <!--Google Maps update Start-->
+    <script>
+        let map;
+        let markers = [];
+
+        // Initialize Google Map
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 15.5, lng: 73.8 }, // Default location
+                zoom: 10,
+                mapId: "313d1888128980a8"
+            });
+        }
+
+        function updateMap(itinerary) {
+            if (!map) {
+                console.error("Google Map is not initialized.");
+                return;
+            }
+
+            // Clear previous markers
+            markers.forEach(marker => marker.setMap(null));
+            markers = [];
+
+            const geocoder = new google.maps.Geocoder();
+
+            itinerary.forEach((item, index) => {
+                geocoder.geocode({ address: item.location }, (results, status) => {
+                    if (status === "OK" && results[0]) {
+                        const position = results[0].geometry.location;
+
+                        const marker = new google.maps.Marker({
+                            position,
+                            map,
+                            title: `Day ${item.day}: ${item.location}`,
+                            label: {
+                                text: `${item.day}`,  // Display the day number
+                                color: "black",       // Text color
+                                fontWeight: "bold",
+                                fontSize: "14px",
+                            }
+                        });
+
+                        markers.push(marker);
+
+                        // InfoWindow for hover effect
+                        const infoWindow = new google.maps.InfoWindow({
+                            content: `
+                        <div style="text-align: center;">
+                            <strong>Day ${item.day}: ${item.location}</strong><br>
+                            <img src="${item.imageUrl}" alt="${item.location}" style="width: 150px; height: 100px; border-radius: 5px; margin-top: 5px;">
+                        </div>
+                    `
+                        });
+
+                        // Show image on hover
+                        marker.addListener("mouseover", () => {
+                            infoWindow.open(map, marker);
+                        });
+
+                        // Hide image when mouse leaves
+                        marker.addListener("mouseout", () => {
+                            infoWindow.close();
+                        });
+
+                        // Center the map on the first successful marker
+                        if (markers.length === 1) {
+                            map.setCenter(position);
+                        }
+                    }
+                });
+            });
+
+            // Resize the map inside the modal
+            setTimeout(() => {
+                google.maps.event.trigger(map, "resize");
+            }, 300);
+        }
+
+    </script>
+    <!--Google Maps update End-->
+
+    <!--Flight JS Start-->
+    <script>
+
+        function openFlightModal() {
+            const flightModal = document.getElementById("flightModal");
+            flightModal.style.display = "flex";
+        }
+
+        function closeFlightModal() {
+            const flightModal = document.getElementById("flightModal");
+            flightModal.style.display = "none";
+        }
+
+
+
+        const FLIGHT_API_URL = "https://localhost:44307/api/Flight/GetFlights";
+
+
+        function validateAndSearchFlights() {
+            const originInput = document.getElementById("flightOrigin");
+            const destinationInput = document.getElementById("flightDestination");
+            const dateInput = document.getElementById("flightDate");
+
+            let isValid = true;
+
+            // Reset previous error messages
+            document.getElementById("flightOriginError").innerText = "";
+            document.getElementById("flightDestinationError").innerText = "";
+            document.getElementById("flightDateError").innerText = "";
+
+            if (!originInput.value) {
+                document.getElementById("flightOriginError").innerText = "Please select a valid origin.";
+                isValid = false;
+            }
+
+            if (!destinationInput.value) {
+                document.getElementById("flightDestinationError").innerText = "Please select a valid destination.";
+                isValid = false;
+            }
+
+            if (!dateInput.value) {
+                document.getElementById("flightDateError").innerText = "Please select a travel date.";
+                isValid = false;
+            }
+
+            if (isValid) {
+                searchFlights(); // Call actual search function
+            }
+        }
+
+        async function getAmadeusAccessToken() {
+            const CLIENT_ID = "nWIQKwxdqDeYhonSpy19DOplGjRPAdEG";
+            const CLIENT_SECRET = "H9Xg6fQC6EkaYYYW";
+            const tokenUrl = "https://test.api.amadeus.com/v1/security/oauth2/token";
+
+            const response = await fetch(tokenUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`
+            });
+
+            const data = await response.json();
+            return data.access_token;  // Returns a valid access token
+        }
+
+        async function fetchPlaces(query, suggestionBoxId) {
+            if (query.length < 2) return; // Only search when user types at least 2 characters
+
+            const accessToken = await getAmadeusAccessToken(); // Get access token
+
+            // 🔹 Fetch both cities & airports, not just airports
+            const API_URL = `https://test.api.amadeus.com/v1/reference-data/locations?subType=CITY,AIRPORT&keyword=${query}`;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Error fetching location data");
+                }
+
+                const data = await response.json();
+                displayPlaceSuggestions(data.data, suggestionBoxId); // Pass results to display function
+            } catch (error) {
+                console.error("Location autocomplete error:", error);
+            }
+        }
+
+
+        function displayPlaceSuggestions(places, suggestionBoxId) {
+            const suggestionBox = document.getElementById(suggestionBoxId);
+            suggestionBox.innerHTML = ""; // Clear previous suggestions
+
+            if (!places || places.length === 0) {
+                suggestionBox.style.display = "none";
+                return;
+            }
+
+            places.forEach(place => {
+                const option = document.createElement("div");
+                option.className = "suggestion-item";
+
+                // Show City Name or Airport Name
+                const locationName = place.name;
+                const locationType = place.subType === "CITY" ? "🌍 City" : "✈️ Airport";
+
+                option.innerHTML = `${locationName} (${place.iataCode}) - ${locationType}`;
+
+                option.onclick = function () {
+                    let inputId = suggestionBoxId.replace("Suggestions", "");
+
+                    // Map input field correctly
+                    if (inputId === "origin") inputId = "flightOrigin";
+                    if (inputId === "destination") inputId = "flightDestination";
+
+                    const inputField = document.getElementById(inputId);
+                    if (inputField) {
+                        inputField.value = `${locationName} (${place.iataCode})`;
+                        suggestionBox.innerHTML = "";  // Hide suggestions
+                        suggestionBox.style.display = "none";
+                    }
+                };
+
+                suggestionBox.appendChild(option);
+            });
+
+            suggestionBox.style.display = "block"; // Show suggestions
+        }
+
+        async function validateAndSearchFlights() {
+            const origin = document.getElementById("flightOrigin").value.trim();
+            const destination = document.getElementById("flightDestination").value.trim();
+            const date = document.getElementById("flightDate").value;
+            const resultsContainer = document.getElementById("flightResults");
+
+            // Reset errors
+            document.getElementById("flightOriginError").innerText = "";
+            document.getElementById("flightDestinationError").innerText = "";
+            document.getElementById("flightDateError").innerText = "";
+
+            let isValid = true;
+
+            if (!origin) {
+                document.getElementById("flightOriginError").innerText = "✈️ Origin is required!";
+                isValid = false;
+            }
+            if (!destination) {
+                document.getElementById("flightDestinationError").innerText = "🛬 Destination is required!";
+                isValid = false;
+            }
+            if (!date) {
+                document.getElementById("flightDateError").innerText = "📅 Date is required!";
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            resultsContainer.innerHTML = "<p>⏳ Searching for flights...</p>";
+
+            try {
+                const flights = await fetchFlights(origin, destination, date);
+
+                resultsContainer.innerHTML = "";
+                if (flights.returnCode !== 100 && flights.data.length > 0) {
+                    flights.data.forEach(flight => {
+                        const flightDiv = document.createElement("div");
+                        flightDiv.className = "flight-card";
+
+                        const segment = flight.itineraries[0].segments[0];
+                        const lastSegment = flight.itineraries[0].segments[flight.itineraries[0].segments.length - 1];
+
+                        const flightNumber = segment.number;
+                        const departureAirportName = segment.departure.airportName;
+                        const departureCode = segment.departure.iataCode;
+                        const arrivalAirportName = lastSegment.arrival.airportName;
+                        const arrivalCode = lastSegment.arrival.iataCode;
+                        const duration = segment.durationTime;
+                        const price = flight.price.total;
+                        const currency = flight.price.currency;
+
+                        // Optional: Parse travel date from departure dateTime if needed
+                        const departureDateTime = segment.departure.at;
+                        const travelDate = departureDateTime.split("T")[0].replace(/-/g, ""); // YYYYMMDD
+
+                        flightDiv.innerHTML = `
+            <div class="flight-header">
+                ✈️ <strong>${flight.validatingAirlineCodes[0]} ${flightNumber}</strong>
+            </div>
+            <div class="flight-info">
+                🛫 <strong>Departure:</strong> ${departureAirportName} (${departureCode})<br>
+                🛬 <strong>Arrival:</strong> ${arrivalAirportName} (${arrivalCode})<br>
+                ⏳ <strong>Duration:</strong> ${duration}<br>
+                💰 <strong>Price:</strong> ${price} ${currency}
+            </div>
+            <button class="flight-book-btn" onclick="bookFlight('${flightNumber}', '${departureCode}', '${arrivalCode}', '${travelDate}')">
+                📅 Book Now
+            </button>
+        `;
+
+                        resultsContainer.appendChild(flightDiv);
+                    });
+                }
+                else {
+                    const messageDiv = document.createElement("div");
+                    messageDiv.className = "flight-error-message";
+                    messageDiv.innerHTML = `⚠️ <strong>${flights.returnMessage}</strong>`;
+                    resultsContainer.appendChild(messageDiv);
+                }
+            } catch (error) {
+                console.error("Error fetching flights:", error);
+                resultsContainer.innerHTML = `<div class="flight-error-message">❌ Error fetching flights. Please try again.</div>`;
+            }
+        }
+
+        function bookFlight(flightNumber, fromCode, toCode, travelDate = '') {
+            // Format the travelDate as YYYYMMDD if provided
+            const datePart = travelDate ? `/${travelDate}` : '';
+            const url = `https://www.skyscanner.co.in/transport/flights/${fromCode}/${toCode}${datePart}/`;
+
+            window.open(url, '_blank');
+        }
+
+
+        async function fetchFlights(origin, destination, date) {
+            try {
+                const response = await fetch(FLIGHT_API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        origin: origin,
+                        destination: destination,
+                        date: date
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch flight data");
+                }
+
+                const flightData = await response.json();
+                return flightData;
+            } catch (error) {
+                console.error("Error fetching flights:", error);
+                return { data: [] }; // Return an empty array if there's an error
+            }
+        }
+
+    </script>
+    <!--Flight JS End-->
+
+    <!--Hotel JS Start-->
+    <script>
+        const HOTEL_API_URL = "https://localhost:44307/api/Hotel/GetHotels";
+
+        function openHotelModal() {
+            const hotelModal = document.getElementById("hotelModal");
+            hotelModal.style.display = "flex";
+        }
+
+        function closeHotelModal() {
+            const hotelModal = document.getElementById("hotelModal");
+            hotelModal.style.display = "none";
+        }
+
+        function validateAndSearchHotels() {
+            const cityInput = document.getElementById("hotel-city");
+            const checkInInput = document.getElementById("hotel-checkInDate");
+            const checkOutInput = document.getElementById("hotel-checkOutDate");
+            const adultsInput = document.getElementById("hotel-adults");
+
+            let isValid = true;
+
+            // Reset previous error messages
+            document.getElementById("hotelCityError").innerText = "";
+            document.getElementById("hotelCheckInError").innerText = "";
+            document.getElementById("hotelCheckOutError").innerText = "";
+            document.getElementById("hotelAdultsError").innerText = "";
+
+            if (!cityInput.value.trim()) {
+                document.getElementById("hotelCityError").innerText = "Please enter a valid city.";
+                isValid = false;
+            }
+
+            if (!checkInInput.value) {
+                document.getElementById("hotelCheckInError").innerText = "Please select a check-in date.";
+                isValid = false;
+            }
+
+            if (!checkOutInput.value) {
+                document.getElementById("hotelCheckOutError").innerText = "Please select a check-out date.";
+                isValid = false;
+            } else if (checkOutInput.value <= checkInInput.value) {
+                document.getElementById("hotelCheckOutError").innerText = "Check-out date must be after check-in date.";
+                isValid = false;
+            }
+
+            if (!adultsInput.value || adultsInput.value < 1) {
+                document.getElementById("hotelAdultsError").innerText = "Please select at least one adult.";
+                isValid = false;
+            }
+
+            if (isValid) {
+                searchHotels(cityInput.value, checkInInput.value, checkOutInput.value, adultsInput.value);
+            }
+        }
+
+        async function searchHotels() {
+            const city = document.getElementById("hotel-city").value.trim();
+            const checkIn = document.getElementById("hotel-checkInDate").value;
+            const checkOut = document.getElementById("hotel-checkOutDate").value;
+            const adults = document.getElementById("hotel-adults").value;
+            const resultsContainer = document.getElementById("hotel-results");
+
+            // Show a loading message
+            resultsContainer.innerHTML = "<p>⏳ Searching for hotels...</p>";
+
+            try {
+                const hotels = await fetchHotels(city, checkIn, checkOut, adults);
+
+                // Clear previous results
+                resultsContainer.innerHTML = "";
+
+                if (hotels.data && hotels.data.length > 0) {
+                    hotels.data.forEach(hotelOffer => {
+                        const hotel = hotelOffer.hotel;
+                        const offer = hotelOffer.offers?.[0]; // Taking the first available offer
+
+                        if (!offer) return; // Skip if no offers available
+
+                        const hotelDiv = document.createElement("div");
+                        hotelDiv.className = "hotel-card";
+
+                        hotelDiv.innerHTML = `
+                    <div class="hotel-header">
+                        🏨 <strong>${hotel.name}</strong>
+                    </div>
+                    <div class="hotel-info">
+                        📍 <strong>Location:</strong> ${hotel.cityCode}<br>
+                        ⭐ <strong>Rating:</strong> ${hotel.rating || 'N/A'} ⭐<br>
+                        ${offer.room.description?.text ? `🛏️ <strong>Room:</strong> ${offer.room.description.text}<br>` : ''}
+                        💰 <strong>Price:</strong> ${offer.price.total} ${offer.price.currency}
+                    </div>
+                    <button class="hotel-book-btn" onclick="bookHotel('${hotel.hotelId}', '${checkIn}', '${checkOut}', '${city}')">
+                        📅 Book Now
+                    </button>
+                `;
+
+                        resultsContainer.appendChild(hotelDiv);
+                    });
+                } else {
+                    // Display return message in a styled box
+                    const messageDiv = document.createElement("div");
+                    messageDiv.className = "hotel-error-message";
+                    messageDiv.innerHTML = `❌ <strong>No hotels available for the selected dates.</strong>`;
+                    resultsContainer.appendChild(messageDiv);
+                }
+            } catch (error) {
+                console.error("Error fetching hotels:", error);
+                resultsContainer.innerHTML = `<div class="hotel-error-message">⚠️ An error occurred while fetching hotels. Please try again.</div>`;
+            }
+        }
+
+
+        // Fetch hotel data from API
+        async function fetchHotels(city, checkIn, checkOut, adults) {
+            try {
+                const response = await fetch(HOTEL_API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        city: city,
+                        checkInDate: checkIn,
+                        checkOutDate: checkOut,
+                        adultCount: adults
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch hotel data");
+                }
+
+                const hotelData = await response.json();
+                return hotelData;
+            } catch (error) {
+                console.error("Error fetching hotels:", error);
+                return { data: [] }; // Return an empty array if there's an error
+            }
+        }
+
+        // Placeholder function for hotel booking
+        function bookHotel(hotelId, checkInDate, checkOutDate, city) {
+            // Format dates from YYYY-MM-DD to YYYY-MM-DD (Booking.com format)
+            const [checkInYear, checkInMonth, checkInDay] = checkInDate.split("-");
+            const [checkOutYear, checkOutMonth, checkOutDay] = checkOutDate.split("-");
+
+            // Construct Booking.com search URL
+            const bookingURL = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(city)}&checkin_year=${checkInYear}&checkin_month=${checkInMonth}&checkin_monthday=${checkInDay}&checkout_year=${checkOutYear}&checkout_month=${checkOutMonth}&checkout_monthday=${checkOutDay}`;
+
+            // Open the URL in a new tab
+            window.open(bookingURL, '_blank');
+        }
+
+
+
+
+        async function fetchCitySuggestions(query) {
+            const accessToken = await getAmadeusAccessToken(); // Get access token
+            if (query.length < 2) return []; // Only search if 2+ characters entered
+
+            try {
+                const response = await fetch(`https://test.api.amadeus.com/v1/reference-data/locations?keyword=${query}&subType=CITY`, {
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}` // Replace with actual token
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch city data");
+                }
+
+                const data = await response.json();
+                return data.data || []; // Return city list
+            } catch (error) {
+                console.error("Error fetching cities:", error);
+                return [];
+            }
+        }
+
+        async function showCitySuggestions(query) {
+            const suggestionsContainer = document.getElementById("hotel-suggestions");
+            suggestionsContainer.innerHTML = ""; // Clear previous suggestions
+
+            const cities = await fetchCitySuggestions(query);
+
+            cities.forEach(city => {
+                const suggestion = document.createElement("div");
+                suggestion.className = "hotel-suggestion-item"; // Styling class
+                suggestion.textContent = `${city.name} (${city.iataCode})`;
+                suggestion.onclick = () => {
+                    document.getElementById("hotel-city").value = city.name; // Set selected city
+                    suggestionsContainer.innerHTML = ""; // Hide suggestions
+                };
+                suggestionsContainer.appendChild(suggestion);
+            });
+        }
+
+
+
+    </script>
+    <!--Hotel JS End-->
+
+    <!--Tours and Activities Start-->
+    <script>
+        function openActivityModal() {
+            const activityModal = document.getElementById("activityModal");
+            activityModal.style.display = "flex";
+        }
+
+        function closeActivityModal() {
+            const activityModal = document.getElementById("activityModal");
+            activityModal.style.display = "none";
+        }
+
+        async function getCityCoordinates(city) {
+            const accessToken = await getAmadeusAccessToken();
+            const response = await fetch(`https://test.api.amadeus.com/v1/reference-data/locations?subType=CITY&keyword=${city}`, {
+                headers: { "Authorization": `Bearer ${accessToken}` }
+            });
+            const data = await response.json();
+
+            if (data?.data?.length > 0) {
+                return data.data[0].geoCode;
+            } else {
+                return null;
+            }
+        }
+
+        async function validateAndSearchActivities() {
+            const accessToken = await getAmadeusAccessToken();
+            const city = document.getElementById("activity-city").value.trim();
+            const date = document.getElementById("activity-date").value;
+            const resultsDiv = document.getElementById("activity-results");
+
+            // Reset errors
+            document.getElementById("activity-city-error").innerText = "";
+            document.getElementById("activity-date-error").innerText = "";
+
+            let isValid = true;
+
+            if (!city) {
+                document.getElementById("activity-city-error").innerText = "City is required.";
+                isValid = false;
+            }
+            if (!date) {
+                document.getElementById("activity-date-error").innerText = "Date is required.";
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            resultsDiv.innerHTML = "<p>🔍 Fetching location data...</p>";
+
+            // Get city coordinates
+            const cityCoords = await getCityCoordinates(city);
+
+            if (!cityCoords) {
+                resultsDiv.innerHTML = "<p>⚠️ Error: Could not find city coordinates.</p>";
+                return;
+            }
+
+            const requestUrl = `https://test.api.amadeus.com/v1/shopping/activities?latitude=${cityCoords.latitude}&longitude=${cityCoords.longitude}&radius=20`;
+
+            try {
+                resultsDiv.innerHTML = "<p>🔄 Searching for activities...</p>";
+
+                const response = await fetch(requestUrl, {
+                    headers: { "Authorization": `Bearer ${accessToken}` }
+                });
+
+                const data = await response.json();
+                console.log("API Response:", data);
+
+                resultsDiv.innerHTML = "";
+
+                if (data.errors) {
+                    resultsDiv.innerHTML = `<p style="color:red;">❌ Error: ${data.errors[0].detail}</p>`;
+                    return;
+                }
+
+                if (!data.data || data.data.length === 0) {
+                    resultsDiv.innerHTML = "<p>⚠️ No activities found.</p>";
+                    return;
+                }
+
+                // Filter activities that have both location (city name) and price
+                const filteredActivities = data.data.filter(activity =>
+                    activity.description && activity.price?.amount
+                ).slice(0, 10); // Get only 10 results
+
+                if (filteredActivities.length === 0) {
+                    resultsDiv.innerHTML = "<p>⚠️ No activities found with valid location and price.</p>";
+                    return;
+                }
+
+                filteredActivities.forEach((activity) => {
+                    const div = document.createElement("div");
+                    div.classList.add("activity-result-item");
+                    div.innerHTML = `
+                        <h3>🎉 ${activity.name || "No Name Available"}</h3>
+                        <p>📍 <strong>${activity.description}</p>
+                        <p>💰 <strong>Price:</strong> ${activity.price.amount} ${activity.price.currencyCode}</p>`;
+                    resultsDiv.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error("Error fetching activities:", error);
+                resultsDiv.innerHTML = "<p>❌ Error fetching data. Please try again.</p>";
+            }
+        }
+
+        async function showCitySuggestionsActivity(query) {
+            const suggestionsContainer = document.getElementById("activity-suggestions");
+            suggestionsContainer.innerHTML = ""; // Clear previous suggestions
+
+            const cities = await fetchCitySuggestions(query);
+
+            cities.forEach(city => {
+                const suggestion = document.createElement("div");
+                suggestion.className = "activity-item"; // Styling class
+                suggestion.textContent = `${city.name} (${city.iataCode})`;
+                suggestion.onclick = () => {
+                    document.getElementById("activity-city").value = city.name; // Set selected city
+                    suggestionsContainer.innerHTML = ""; // Hide suggestions
+                };
+                suggestionsContainer.appendChild(suggestion);
+            });
+        }
+    </script>
+    <!--Tours and Activities End-->
+
+    <script type="module" src="/chatbot.js"></script>
+
+    <!--Nav bar and Footer Start-->
+    <script>
+        window.renderNavbar = function () {
+            const authButton = document.getElementById("authButton");
+            const loginButton = document.getElementById("loginButton");
+
+            if (!authButton) {
+                console.warn("Navbar not loaded yet, retrying...");
+                setTimeout(renderNavbar, 100); // Retry after 100ms
+                return;
+            }
+
+            const userFullName = sessionStorage.getItem("UserFullName");
+            if (userFullName) {
+                const dashboard = document.getElementById("dashboard");
+                dashboard.style.display = "block";
+                authButton.innerHTML = `
+            <div id="authContainer">
+            <div id="welcomeText"> <i class="fas fa-user"></i>${userFullName}</div>
+            <button id="logoutButton" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i></button>
+            </div>`;
+            } else {
+                loginButton.innerHTML = `
+            <div id="authContainer">
+            <div id="welcomeText"> <b>Login</b> </div>
+            <button id="loginButton" onclick="handleLogin()"><i class="fas fa-user-alt"></i></button>
+            </div>`;
+            }
+        };
+
+
+    </script>
+
+    <script>
+        const loadComponent = async (path, target, callback) => {
+            try {
+                const response = await fetch(path);
+                if (!response.ok) throw new Error();
+                document.getElementById(target).innerHTML = await response.text();
+
+                // Call the callback function if provided
+                if (callback && typeof callback === "function") {
+                    callback();
+                }
+            } catch {
+                document.getElementById(target).innerHTML = `<p>Error loading ${target}</p>`;
+            }
+        };
+
+        // Load Navbar and Footer, then renderNavbar after navbar loads
+        loadComponent('/navbar.html', 'navbar', renderNavbar);
+        loadComponent('/footer.html', 'footer');
+
+    </script>
+    <!--Nav bar and Footer End-->
+</body>
+
+</html>

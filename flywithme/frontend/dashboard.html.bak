@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Fly With Me</title>
+    <link rel="stylesheet" href="/frontend/public/css/styles.css">
+    <script src="js/dashboard.js"></script>
+</head>
+<body>
+    <!-- Navbar (dynamically loaded) -->
+    <div id="navbar"></div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard">
+        <h1>Your Saved Trips</h1>
+        <p>Manage and view your saved trips and itineraries here.</p>
+
+        <!-- Saved Trips List -->
+        <h2>Your Saved Trips</h2>
+        <ul id="saved-trips">
+            <!-- Example list items for saved trips -->
+            <li>Trip to Paris - Duration: 7 days</li>
+            <li>Trip to Bali - Duration: 5 days</li>
+        </ul>
+
+        <!-- Form to Add a New Trip -->
+        <h2>Save a New Trip</h2>
+        <form id="trip-form">
+            <label for="destination">Destination:</label>
+            <input type="text" id="destination" name="destination" required>
+
+            <label for="preferences">Preferences:</label>
+            <select id="preferences" name="preferences" required>
+                <option value="adventure">Adventure</option>
+                <option value="relaxation">Relaxation</option>
+                <option value="culture">Culture</option>
+                <option value="nature">Nature</option>
+            </select>
+
+            <label for="duration">Duration (days):</label>
+            <input type="number" id="duration" name="duration" required>
+
+            <button type="submit">Save Trip</button>
+        </form>
+
+        <button id="new-trip">Create New Trip</button>
+    </div>
+
+    <!-- Footer (dynamically loaded) -->
+    <div id="footer"></div>
+
+    <!-- JavaScript to load Navbar and Footer -->
+    <script>
+        // JavaScript to load Navbar
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar').innerHTML = data;
+            });
+
+        // JavaScript to load Footer
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+            });
+    </script>
+</body>
+</html>

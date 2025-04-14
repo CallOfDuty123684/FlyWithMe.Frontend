@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Blog - Fly With Me</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/modal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+   <!-- Navbar (dynamically loaded) -->
+   <div id="navbar"></div>
+
+   <div class="container">
+       <header>
+           <h1>Travel Blogs</h1>
+       </header>
+
+       <div class="tours">
+           <div class="tour-item">
+               <img src="../images/blog/main/b-1.jpg" alt="Blog1">
+               <h3>Unveiling Secret Escapes: Explore Lesser-Known Destinations</h3>
+               <button onclick="viewBlogDetails('Blog1')">Read More</button>
+           </div>
+           <div class="tour-item">
+               <img src="../images/blog/main/b-2.jpg" alt="Blog2">
+               <h3>Guide to cultural festivals, food tours, and authentic local experiences.</h3>
+               <button onclick="viewBlogDetails('Blog2')">Read More</button>
+           </div>
+           <div class="tour-item">
+               <img src="../images/blog/main/b-3.jpg" alt="Blog3">
+               <h3>Opulent Retreats: Exclusive Resorts and Unforgettable Luxury Experiences</h3>
+               <button onclick="viewBlogDetails('Blog3')">Read More</button>
+           </div>
+       </div>
+
+       <div class="tours">
+           <div class="tour-item">
+               <img src="../images/blog/main/b-4.jpg" alt="Blog4">
+               <h3>Affordable Getaways: Explore the World on a Budget</h3>
+               <button onclick="viewBlogDetails('Blog4')">Read More</button>
+           </div>
+           <div class="tour-item">
+               <img src="../images/blog/main/b-5.jpg" alt="Blog5">
+               <h3>Smart Travel Secrets: Essential Tips and Hacks for a Hassle-Free Journey</h3>
+               <button onclick="viewBlogDetails('Blog5')">Read More</button>
+           </div>
+           <div class="tour-item">
+               <img src="../images/blog/main/b-6.jpg" alt="Blog6">
+               <h3>Authentic Journeys: Dive into Local Traditions and Cultural Wonders</h3>
+               <button onclick="viewBlogDetails('Blog6')">Read More</button>
+           </div>
+       </div>
+   </div>
+
+
+   <!-- Footer (dynamically loaded) -->
+   <div id="footer"></div>
+   
+
+   <script>
+    function viewBlogDetails(blog) {
+        window.location.href = `blogdetails.html?blogId=${encodeURIComponent(blog)}`;
+    }
+</script>
+
+<script>
+    function handleLogout() {
+        const dashboard = document.getElementById("dashboard");
+        dashboard.style.display = "none";
+
+        sessionStorage.clear(); // Remove user data
+        loadComponent('/navbar.html', 'navbar', renderNavbar); // Reload Navbar
+    }
+</script>
+
+<script>
+    window.renderNavbar = function () {
+        const authButton = document.getElementById("authButton");
+
+        if (!authButton) {
+            console.warn("Navbar not loaded yet, retrying...");
+            setTimeout(renderNavbar, 100); // Retry after 100ms
+            return;
+        }
+
+        const userFullName = sessionStorage.getItem("UserFullName");
+
+        if (userFullName) {
+
+            const dashboard = document.getElementById("dashboard");
+            dashboard.style.display = "block";
+
+            authButton.innerHTML = `
+ <div id="authContainer">
+    <div id="welcomeText"> <i class="fas fa-user"></i>${userFullName}</div>
+    <button id="logoutButton" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+`;
+        }
+    };
+
+
+</script>
+
+<script>
+    const loadComponent = async (path, target, callback) => {
+        try {
+            const response = await fetch(path);
+            if (!response.ok) throw new Error();
+            document.getElementById(target).innerHTML = await response.text();
+
+            // Call the callback function if provided
+            if (callback && typeof callback === "function") {
+                callback();
+            }
+        } catch {
+            document.getElementById(target).innerHTML = `<p>Error loading ${target}</p>`;
+        }
+    };
+
+    // Load Navbar and Footer, then renderNavbar after navbar loads
+    loadComponent('/navbar.html', 'navbar', renderNavbar);
+    loadComponent('/footer.html', 'footer');
+
+</script>
+</body>
+</html>

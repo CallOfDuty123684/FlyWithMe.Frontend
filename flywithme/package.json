@@ -1,0 +1,32 @@
+{
+  "dependencies": {
+    "@react-oauth/google": "^0.12.1",
+    "axios": "^1.7.9",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "firebase": "^11.3.1",
+    "jwt-decode": "^4.0.0",
+    "mongoose": "^8.10.1",
+    "mysql2": "^3.11.5",
+    "openai": "^4.85.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "pg": "^8.13.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "name": "fly_with_me_website",
+  "version": "1.0.0",
+  "description": "**Fly With Me** is a travel planner website that helps users create customized itineraries, explore destinations, view travel blogs, and plan their trips with dynamic features like real-time weather and currency conversion.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node FlyWithMe_Backend/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

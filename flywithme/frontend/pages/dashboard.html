@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Fly With Me</title>
+
+    <!-- External Resources -->
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+
+    <style>
+        .chat-container {
+            width: 94%;
+            height: 70%;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            padding: 15px;
+            margin-top: 50px;
+            margin-bottom: 100px;
+        }
+
+        .chat-header {
+            background: #007bff;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .chat-box {
+            height: 700px !important;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .chat-message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background: #007bff;
+            color: white;
+            align-self: flex-end;
+            text-align: right;
+        }
+
+        .response-message {
+            background: #1f374f !important;
+            color: black !important;
+            align-self: flex-start;
+            text-align: left;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: gray;
+            text-align: center;
+            margin-top: -8px;
+        }
+    </style>
+
+
+<body>
+    <div id="navbar"></div>
+
+<div class="container" style="margin-left: 50px;">
+    <div class="chat-container">
+        <div class="chat-header">Chat History</div>
+        <div class="chat-box" id="chatBox"></div>
+    </div>
+</div>
+   
+    <div id="footer"></div>
+
+</body>
+
+<script>
+    const API_URL = "https://localhost:44307/api/Chat/GetUserChatHistory";
+    const userId = sessionStorage.getItem("UserId");
+    document.addEventListener("DOMContentLoaded", async function () {
+        const requestData = {
+            userId: userId
+        };
+
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestData)
+        });
+
+        const chatData = await response.json();
+        const chatBox = document.getElementById("chatBox");
+
+        chatData.forEach(chat => {
+            let userMessage = document.createElement("div");
+            userMessage.className = "chat-message user-message";
+            userMessage.textContent = chat.userChatRequest;
+            chatBox.appendChild(userMessage);
+
+            let timestamp = document.createElement("div");
+            timestamp.className = "timestamp";
+            timestamp.textContent = chat.createdDate;
+            chatBox.appendChild(timestamp);
+
+            let botMessage = document.createElement("div");
+            botMessage.className = "chat-message response-message";
+            botMessage.innerHTML = `<p>${chat.chatResponse.chatResult.replace(/\n/g, '<br>')}</p>`;
+            chatBox.appendChild(botMessage);
+        });
+    });
+</script>
+
+<script>
+    function handleLogout() {
+        window.location="/index.html";
+        sessionStorage.clear(); // Remove user data
+        loadComponent('/navbar.html', 'navbar', renderNavbar); // Reload Navbar
+    }
+</script>
+
+<script>
+    window.renderNavbar = function () {
+        const authButton = document.getElementById("authButton");
+
+        if (!authButton) {
+            console.warn("Navbar not loaded yet, retrying...");
+            setTimeout(renderNavbar, 100); // Retry after 100ms
+            return;
+        }
+
+        const userFullName = sessionStorage.getItem("UserFullName");
+        if (userFullName) {
+            const dashboard = document.getElementById("dashboard");
+            dashboard.style.display = "block";
+
+            authButton.innerHTML = `
+        <div id="authContainer">
+        <div id="welcomeText"> <i class="fas fa-user"></i>${userFullName}</div>
+        <button id="logoutButton" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    `;
+        }
+    };
+
+
+</script>
+
+<script>
+    const loadComponent = async (path, target, callback) => {
+        try {
+            const response = await fetch(path);
+            if (!response.ok) throw new Error();
+            document.getElementById(target).innerHTML = await response.text();
+
+            // Call the callback function if provided
+            if (callback && typeof callback === "function") {
+                callback();
+            }
+        } catch {
+            document.getElementById(target).innerHTML = `<p>Error loading ${target}</p>`;
+        }
+    };
+
+    // Load Navbar and Footer, then renderNavbar after navbar loads
+    loadComponent('/navbar.html', 'navbar', renderNavbar);
+    loadComponent('/footer.html', 'footer');
+
+</script>
+
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Fly With Me</title>
+    <link rel="stylesheet" href="/css/styles.css">
+
+    <script src="js/feedback.js"></script>
+
+</head>
+<body>
+    <!-- Navbar (dynamically loaded) -->
+    <div id="navbar"></div>
+
+    <header>
+        <h1>Contact Fly With Me</h1>
+    </header>
+
+    <div class="contact">
+        <h2>Get in Touch</h2>
+        <p>We'd love to hear from you! Reach us at:</p>
+        <ul>
+            <li>Email: <a href="mailto:FlyWithMe@gmail.com">FlyWithMe@gmail.com</a></li>
+            <li>Phone: <a href="tel:+9714944322">+9714944322</a></li>
+            <li>Address: University Of Birmingham, Dubai, UAE</li>
+        </ul>
+        <h3>Our Location</h3>
+        <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3623.236828698215!2d55.41499531500633!3d25.102350241025827!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f12a4f6e6b8d1%3A0x74a453fd6d4b2d44!2sUniversity%20of%20Birmingham%20Dubai!5e0!3m2!1sen!2sae!4v1707300000000!5m2!1sen!2sae"            width="100%" 
+            height="300" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy">
+        </iframe>
+    </div>
+
+   
+
+    <!-- Footer (dynamically loaded) -->
+    <div id="footer"></div>
+
+    <script>
+        // JavaScript to load Navbar
+        fetch('../navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar').innerHTML = data;
+            });
+
+        // JavaScript to load Footer
+        fetch('../footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+            });
+    </script>
+</body>
+</html>

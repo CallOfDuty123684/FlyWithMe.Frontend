@@ -1,0 +1,132 @@
+.hotel-card {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.hotel-error-message {
+    color: red;
+    font-size: 16px;
+    padding: 10px;
+    background: #ffe6e6;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.hotel-card button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.hotel-card button:hover {
+    background-color: #218838;
+}
+
+.hotel-error {
+    color: red;
+    font-size: 14px;
+    display: block;
+    margin-top: 5px;
+}
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f4f4f4;
+}
+
+/* Button to Open Modal */
+.hotel-open-modal-btn {
+    background-color: #007BFF;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    margin-top: 50px;
+    border-radius: 5px;
+}
+
+.hotel-open-modal-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Modal Background */
+.hotel-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Modal Content */
+.hotel-modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+/* Close Button */
+.hotel-close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.hotel-close-modal:hover {
+    color: red;
+}
+
+/* Form Styles */
+#hotelSearchForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#hotelSearchForm input, 
+#hotelSearchForm button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+#hotelSearchForm button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#hotelSearchForm button:hover {
+    background-color: #218838;
+}
+
+/* Search Results */
+#hotel-results {
+    margin-top: 20px;
+    padding: 10px;
+}
+
+

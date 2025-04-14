@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequently Visited Places</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/modal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+    <!-- Navbar (dynamically loaded) -->
+    <div id="navbar"></div>
+    
+    <div class="container">
+        <header>
+            <h1>Frequently Visited Places</h1>
+        </header>
+        
+        <p>We, our company <strong>Fly With Me</strong> website, have attracted hundreds of users, helping them plan their perfect trips. Through our advanced tracking and analysis system, we have collected extensive data on user preferences, travel patterns, and trending destinations. By leveraging this data, we provide tailored recommendations on the best places to visit based on different seasons and travel trends.</p>
+        
+        <p>Our system continuously monitors travel trends by analyzing user searches, booking behavior, and global travel insights. This allows us to identify the most frequently visited destinations for each period of the year, ensuring our users get the best travel experiences.</p>
+        
+        <h2>Best Travel Periods</h2>
+        <div class="tours">
+            <div class="tour-item">
+                <img src="../public/images/maldives.jpg" alt="Maldives">
+                <h3>January - April: Maldives</h3>
+                <p>Experience the tropical beauty and serene beaches of the Maldives.</p>
+            </div>
+            <div class="tour-item">
+                <img src="../public/images/italy.jpg" alt="Italy">
+                <h3>May - June: Italy</h3>
+                <p>Explore the historic charm and artistic wonders of Italy.</p>
+            </div>
+            <div class="tour-item">
+                <img src="../public/images/norway.jpg" alt="Norway">
+                <h3>July - August: Norway</h3>
+                <p>Escape to the scenic landscapes and majestic fjords of Norway.</p>
+            </div>
+        </div>
+        <div class="tours">
+            <div class="tour-item">
+                <img src="../public/images/japan.jpg" alt="Japan">
+                <h3>September - October: Japan</h3>
+                <p>Discover the cultural richness and technological marvels of Japan.</p>
+            </div>
+            <div class="tour-item">
+                <img src="../public/images/austria.jpg" alt="Austria">
+                <h3>November - December: Austria</h3>
+                <p>Experience the festive spirit and enchanting Christmas markets of Austria.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer (dynamically loaded) -->
+    <div id="footer"></div>
+    
+    <script>
+        const loadComponent = async (path, target) => {
+            try {
+                const response = await fetch(path);
+                if (!response.ok) throw new Error();
+                document.getElementById(target).innerHTML = await response.text();
+            } catch {
+                document.getElementById(target).innerHTML = `<p>Error loading ${target}</p>`;
+            }
+        };
+        
+        loadComponent('/navbar.html', 'navbar');
+        loadComponent('/footer.html', 'footer');
+    </script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tour Details  - Fly With Me</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/modal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        .tour-container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .destination {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            text-align: left;
+            background-color: rgb(58 59 58 / 70%);
+        }
+
+        .destination img {
+            width: 50%;
+            max-height: 300px;
+            border-radius: 8px;
+            max-width: 417px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 20px;
+            margin: 100px auto;
+
+        }
+
+        ul li {
+            display: inline;
+            background-color: transparent;
+        }
+
+        /* shapeed container */
+        .breadcrumbs {
+            text-align: left;
+            background-color: #2C272E;
+            width: fit-content;
+            clip-path: polygon(0% 0%, 96% 0%, 100% 50%, 96% 100%, 0% 100%);
+        }
+
+        .breadcrumb-link a {
+            text-decoration: none;
+            color: #E1E8EB;
+            background-color: transparent;
+        }
+
+        .breadcrumbs li+li:before {
+            padding: 16px;
+            content: ">";
+            color: #E59934;
+            background-color: transparent;
+        }
+
+
+        /* emphasis on the last link Headphones */
+        li:last-child a {
+            font-weight: bold;
+        }
+
+        /* Shadow filter since box shadow can't be visible on clip path */
+        #shadow {
+            float: left;
+            filter: drop-shadow(6px 6px 4px rgba(28, 30, 25, 0.8));
+            margin-top: -95px;
+        }
+
+        .img-tour {
+            display: flex;
+            justify-content: center;
+            /* Centers horizontally */
+            align-items: center;
+            /* Centers vertically (if needed) */
+            height: 100%;
+            /* Ensure parent div has height */
+        }
+
+        .img-tour img {
+            max-width: 100%;
+            /* Ensure the image is responsive */
+            height: auto;
+        }
+
+        .videodiv {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center horizontally */
+    text-align: center;
+    width: 100%; /* Optional: Ensure it takes full width */
+}
+
+#tour-video {
+    width: 100%;
+    max-width: 1000px; /* Adjust for better responsiveness */
+    height: 450px; /* Adjust based on preference */
+}
+
+#mainDescription {
+    margin-top: 15px; /* Space between video and description */
+    max-width: 800px; /* Keep text aligned with the video */
+}
+
+
+        .videodiv iframe {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar"></div>
+
+    <span id="shadow">
+        <ul class='breadcrumbs'>
+            <li class="breadcrumb-link"><a href="tours.html">Back to Tours</a></li>
+            <li class="breadcrumb-link"><a id="breadcrumb-title">Loading...</a></li>
+        </ul>
+    </span>
+
+    <!-- <h1 id="tour-title"></h1> -->
+    
+
+    <div class="destination videodiv">
+        <iframe id="tour-video" frameborder="0" allowfullscreen></iframe>
+        <h3 id="mainDescription"></h3>
+    </div>
+    
+
+    <div id="tour-details" class="tour-container">
+        <p>Loading tour details...</p>
+    </div>
+
+    <div id="footer"></div>
+
+    <script>
+        // Function to get query parameters from URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        async function fetchTourDetails() {
+            const place = getQueryParam('place'); // Get place name from URL
+            const API_URL = "https://localhost:44307/api/Tour/tour-details?placeName=";
+
+            if (!place) {
+                document.getElementById('tour-details').innerHTML = "<p>Invalid tour selection.</p>";
+                return;
+            }
+
+            try {
+                const response = await fetch(API_URL + `${encodeURIComponent(place)}`); // API call with place parameter
+                const data = await response.json();
+
+                // document.getElementById('tour-title').innerText = place.toUpperCase();
+                document.getElementById('breadcrumb-title').innerText = place.toUpperCase(); // Update breadcrumb
+                document.getElementById('mainDescription').innerText = data.mainDescription;
+
+                const container = document.getElementById('tour-details');
+                container.innerHTML = ""; // Clear loading message
+
+                data.tourDetails.forEach(place => {
+                    const div = document.createElement('div');
+                    div.classList.add('destination');
+                    div.innerHTML = `
+                        <h2>${place.name}</h2>
+                        <div class='img-tour'><img src="${place.imageUrl}" alt="${place.name}"></div>
+                        <p style='color:#e9e9e9;'>${place.description}</p>
+                    `;
+                    container.appendChild(div);
+                });
+
+                // Set video URL dynamically
+                if (data.tourDetails.length > 0 && data.videoURL != '') {
+                    document.getElementById('tour-video').src = `${data.videoURL}?autoplay=1&mute=1`;
+                } else {
+                    document.getElementById('tour-video').src = ""; // Hide iframe if no video is available
+                }
+
+            } catch (error) {
+                //document.getElementById('tour-title').innerText = "Error Loading Tour";
+                document.getElementById('tour-details').innerHTML = "<p>Error loading details. Please try again.</p>";
+            }
+        }
+
+        fetchTourDetails();
+    </script>
+
+    <script>
+        function handleLogout() {
+
+        const dashboard = document.getElementById("dashboard");
+        dashboard.style.display = "none";
+
+            sessionStorage.clear(); // Remove user data
+            loadComponent('/navbar.html', 'navbar', renderNavbar); // Reload Navbar
+        }
+    </script>
+
+    <script>
+        window.renderNavbar = function () {
+            const authButton = document.getElementById("authButton");
+
+            if (!authButton) {
+                console.warn("Navbar not loaded yet, retrying...");
+                setTimeout(renderNavbar, 100); // Retry after 100ms
+                return;
+            }
+
+            const userFullName = sessionStorage.getItem("UserFullName");
+
+            if (userFullName) {
+
+        const dashboard = document.getElementById("dashboard");
+        dashboard.style.display = "block";
+
+                authButton.innerHTML = `
+         <div id="authContainer">
+            <div id="welcomeText"> <i class="fas fa-user"></i>${userFullName}</div>
+            <button id="logoutButton" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+    `;
+            }
+        };
+
+
+    </script>
+
+    <script>
+        const loadComponent = async (path, target, callback) => {
+            try {
+                const response = await fetch(path);
+                if (!response.ok) throw new Error();
+                document.getElementById(target).innerHTML = await response.text();
+
+                // Call the callback function if provided
+                if (callback && typeof callback === "function") {
+                    callback();
+                }
+            } catch {
+                document.getElementById(target).innerHTML = `<p>Error loading ${target}</p>`;
+            }
+        };
+
+        // Load Navbar and Footer, then renderNavbar after navbar loads
+        loadComponent('/navbar.html', 'navbar', renderNavbar);
+        loadComponent('/footer.html', 'footer');
+
+    </script>
+
+</body>
+
+</html>
